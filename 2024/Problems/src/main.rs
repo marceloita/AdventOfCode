@@ -1,5 +1,5 @@
 #![allow(unused_variables)]
-#![allow(unused_impor)]
+#![allow(unused_imports)]
 mod Problem1;
 mod Problem2;
 mod Problem3;
@@ -12,9 +12,9 @@ use Problem1::{part1 as problem1_part1, part2 as problem1_part2};
 use Problem2:: {part1 as problem2_part1, part2 as  problem2_part2};
 use Problem3::{part1 as problem3_part1};
 use Problem4::{part1_refact as problem4_part1, part2 as problem4_part2};
-use Problem5::{part1 as problem5_part1};
+use Problem5::{part1 as problem5_part1, part2 as problem5_part2};
 
-const FILE_NAME: &str = "problem5.txt";
+const FILE_NAME: &str = "problem5_input.txt";
 
 fn main(){
 
@@ -69,7 +69,11 @@ fn main(){
     // -------------------------------------------------
 
         // ------------------- PROBLEM 5 -------------------
-    let test = problem5_part1(&rules, &orders);
+    let decoded_sum_p1 = problem5_part1(&rules, &orders);
+    let decoded_sum_p2 = problem5_part2(&rules, &orders);
+
+    println!("{decoded_sum_p1}");
+    println!("{decoded_sum_p2}");
     // -------------------------------------------------
 
 
