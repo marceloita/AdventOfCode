@@ -1,37 +1,37 @@
 use std::collections::HashMap;
-
 use std::io::Read;
 use std::{fs::File};
 use std::{io};
 
-pub fn read_file(path: &str) -> Result<String, io::Error> {
-    let mut file_contents = String::new();
-    let _ = File::open(path)?.read_to_string(&mut file_contents);
-    Ok(file_contents)
-}
+use crate::problems::AdventProblem;
 
-pub fn part1(file_content: &str) -> i32 {
+pub struct Problem03;
 
-    let enable_idx = get_enable_indexes(&file_content);
-    let disable_idx = get_disable_indexes(&file_content);
-    let mut multiplier_idx = get_multipliers(&file_content);
+impl AdventProblem for Problem03 {
+    fn part1(file_content: &str) -> i32 {
 
-    let mut enable_limit = 0;
-    
-    for i in 0..disable_idx.len() {
-        for j in 0..enable_idx.len() {
-            
-            if enable_idx[j] > disable_idx[i]{
-                enable_limit = enable_idx[j];
-                break;
+        let enable_idx = get_enable_indexes(&file_content);
+        let disable_idx = get_disable_indexes(&file_content);
+        let mut multiplier_idx = get_multipliers(&file_content);
+
+        let mut enable_limit = 0;
+        
+        for i in 0..disable_idx.len() {
+            for j in 0..enable_idx.len() {
+                
+                if enable_idx[j] > disable_idx[i]{
+                    enable_limit = enable_idx[j];
+                    break;
+                }
             }
+
+            multiplier_idx.retain(|&k,_| k < disable_idx[i] || k > enable_limit);
         }
 
-        multiplier_idx.retain(|&k,_| k < disable_idx[i] || k > enable_limit);
+        let result: i32 = multiplier_idx.values().map(|(a,b)| a*b).sum();
+        result
     }
 
-    let result: i32 = multiplier_idx.values().map(|(a,b)| a*b).sum();
-    result
 }
 
 fn get_multipliers(file_content: &str) -> HashMap<usize,(i32,i32)> {

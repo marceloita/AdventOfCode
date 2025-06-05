@@ -1,5 +1,6 @@
 use std::{fs::File, io::BufReader, io::BufRead};
 use std::{char, io, vec};
+use crate::problems::AdventProblem;
 
 const  DIRECTIONS_PR1: [(isize,isize);8] = [
     (0,1), // RIGHT
@@ -17,38 +18,54 @@ const DIRECTIONS_CROSS: [((isize, isize), (isize, isize)); 2] = [
     ((-1, 1), (1, -1)),  // Diagonal top-right to bottom-left
 ];
 
-pub fn read_matrix(file_path: &str) -> io::Result<Vec<Vec<char>>> {
-    let file = File::open(file_path)?;
-    let reader = BufReader::new(file);
+pub struct Problem04;
 
-    let mut matrix: Vec<Vec<char>> = Vec::new();
-    let mut expected_columns: Option<usize> = None;
+impl AdventProblem for Problem04 {
+    fn part1(xmas_matrix: &Vec<Vec<char>>, word: &str) -> i32 {
 
-    for (line_num, line_result) in reader.lines().enumerate() {
-        let line = line_result?;
-        let chars: Vec<char> = line.chars().collect();
+        let mut xmas_count = 0;
 
-        match expected_columns {
-            Some(cols) if chars.len() != cols => {
-                return Err(io::Error::new(
-                    io::ErrorKind::InvalidData,
-                    format!("Line {} has inconsistent number of columns: expected {}, got {}",
-                            line_num + 1, cols, chars.len()),
-                ));
+        for i in 0..xmas_matrix.len() {
+            for j in 0..xmas_matrix[0].len() {
+
+                for &(dx,dy) in &DIRECTIONS_PR1 {
+                    if is_correct(xmas_matrix, i, j, dx, dy, &word) {
+                        xmas_count += 1;
+                    }
+                }
             }
-            None => {
-                expected_columns = Some(chars.len());
-            }
-            _ => {}
         }
-
-        matrix.push(chars);
+        xmas_count
     }
 
-    Ok(matrix)
+    fn part2(xmas_matrix: &Vec<Vec<char>>) -> i32 {
+
+        let mut xmas_count = 0;
+
+        for i in 0..xmas_matrix.len() {
+            for j in 0..xmas_matrix[0].len() {
+
+                if xmas_matrix[i][j] != 'A' {
+                    continue;
+                }
+
+                let mut checker = 0;
+                for &((dx1, dy1),(dx2, dy2)) in &DIRECTIONS_CROSS {
+                    if is_cross_correct(xmas_matrix, i, j, dx1, dy1, dx2, dy2) {
+                        checker += 1;
+                    }
+
+                    if checker == 2 {
+                        xmas_count += 1;
+                    }
+                }
+            }
+        };
+        xmas_count
+    }
 }
 
-pub fn part1(xmas_matrix: &Vec<Vec<char>>) -> i32 {
+pub fn part1_old(xmas_matrix: &Vec<Vec<char>>) -> i32 {
     let mut xmas_app = 0;
     for i in 0..xmas_matrix.len() {
         for j in 0..xmas_matrix[i].len() {
@@ -121,22 +138,7 @@ fn idx_to_check(xmas_matrix: &Vec<Vec<char>>,
     && xmas_matrix[s_x_idx][s_y_idx].eq(&'S')
 }
 
-pub fn part1_refact(xmas_matrix: &Vec<Vec<char>>, word: &str) -> i32 {
-
-    let mut xmas_count = 0;
-
-    for i in 0..xmas_matrix.len() {
-        for j in 0..xmas_matrix[0].len() {
-
-            for &(dx,dy) in &DIRECTIONS_PR1 {
-                if is_correct(xmas_matrix, i, j, dx, dy, &word) {
-                    xmas_count += 1;
-                }
-            }
-        }
-    }
-    xmas_count
-}
+pub
 
 
 fn is_correct(xmas_matrix: &Vec<Vec<char>>, x: usize, y: usize, dx: isize, dy: isize, word: &str) -> bool{
@@ -150,32 +152,6 @@ fn is_correct(xmas_matrix: &Vec<Vec<char>>, x: usize, y: usize, dx: isize, dy: i
         }
     };
     true
-}
-
-pub fn part2(xmas_matrix: &Vec<Vec<char>>) -> i32 {
-
-    let mut xmas_count = 0;
-
-    for i in 0..xmas_matrix.len() {
-        for j in 0..xmas_matrix[0].len() {
-
-            if xmas_matrix[i][j] != 'A' {
-                continue;
-            }
-
-            let mut checker = 0;
-            for &((dx1, dy1),(dx2, dy2)) in &DIRECTIONS_CROSS {
-                if is_cross_correct(xmas_matrix, i, j, dx1, dy1, dx2, dy2) {
-                    checker += 1;
-                }
-
-                if checker == 2 {
-                    xmas_count += 1;
-                }
-            }
-        }
-    };
-    xmas_count
 }
 
 fn is_cross_correct(xmas_matrix: &Vec<Vec<char>>, x: usize, y: usize, dx1: isize, dy1: isize, dx2: isize, dy2: isize) -> bool {

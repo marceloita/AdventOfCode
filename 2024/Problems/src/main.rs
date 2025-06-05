@@ -1,48 +1,43 @@
-#![allow(unused_variables)]
-#![allow(unused_imports)]
-mod Problem1;
-mod Problem2;
-mod Problem3;
-mod Problem4;
-mod Problem5;
+mod problems;
+mod utils;
+use problems::*;
+use std::io::{stdin};
 
-use std::{path, vec};
 
-use Problem1::{part1 as problem1_part1, part2 as problem1_part2};
-use Problem2:: {part1 as problem2_part1, part2 as  problem2_part2};
-use Problem3::{part1 as problem3_part1};
-use Problem4::{part1_refact as problem4_part1, part2 as problem4_part2};
-use Problem5::{part1 as problem5_part1, part2 as problem5_part2};
-
-const FILE_NAME: &str = "problem5_input.txt";
+const MIN_PROBLEM_NUMBER: u32 = 1;
+const MAX_PROBLEM_NUMBER: u32 = 24;
 
 fn main(){
 
-    let path_name = String::from(FILE_NAME);
-    let rules_check = Problem5::extract_rules(&path_name);
-    let orders_check = Problem5::extract_orders(&path_name);
+    println!("Enter a problem number:");
+    let mut input = String::new();
+    stdin().read_line(&mut input).unwrap();
 
-    let mut rules: Vec<(u32,u32)> = Vec::new();
+    let mut problem_number = 0;
 
-    match rules_check {
-        Ok(file_content) => rules = file_content,
-        Err(e) => eprintln!("Error"),
+    match input.trim().parse::<u32>() {
+        Ok(p_number) if p_number >= MIN_PROBLEM_NUMBER || p_number <= MAX_PROBLEM_NUMBER => { 
+            problem_number = p_number;
+        }
+        Ok(_) => {
+            println!("The number must be  between 1 and 24");
+        }
+        Err(e) => {
+            eprintln!("Failed to parse  the  input: {}", e);
+        }
     }
 
-    let mut orders: Vec<Vec<u32>> = Vec::new();
+    if let Some(problem) = get_problem(problem_number) {
+        let input_path = format!("inputs/problem{:02}_input.txt", problem_number);
 
-    match orders_check {
-        Ok(file_content) => orders = file_content,
-        Err(e) => eprintln!("Error"),
+        println!("Part 1 result: {}", problem.part1(&input_path));
+        println!("Part 2 result: {}", problem.part2(&input_path));
+    } else {
+        eprint!("Problem not found my dear...");
     }
 
-    // let mut file_content = Vec::with_capacity(file_content_check.iter().len());
-    // let mut file_content = String::new();
 
-    // match file_content_check {
-    //     Ok(file_content_check) => file_content = file_content_check,
-    //     Err(e) => eprintln!("Error: {}", e),
-    // }
+
 
     // ------------------- PROBLEM 1 -------------------
     // let distance = problem1_part1(&file_content);
@@ -68,12 +63,12 @@ fn main(){
     // println!("{xmas_result}");
     // -------------------------------------------------
 
-        // ------------------- PROBLEM 5 -------------------
-    let decoded_sum_p1 = problem5_part1(&rules, &orders);
-    let decoded_sum_p2 = problem5_part2(&rules, &orders);
+    // ------------------- PROBLEM 5 -------------------
+    // let decoded_sum_p1 = problem5_part1(&rules, &orders);
+    // let decoded_sum_p2 = problem5_part2(&rules, &orders);
 
-    println!("{decoded_sum_p1}");
-    println!("{decoded_sum_p2}");
+    // println!("{decoded_sum_p1}");
+    // println!("{decoded_sum_p2}");
     // -------------------------------------------------
 
 

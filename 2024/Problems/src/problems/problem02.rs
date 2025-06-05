@@ -1,50 +1,55 @@
 use std::{num::ParseIntError, process::Termination};
+use crate::problems::AdventProblem;
 
+pub struct Problem02;
 
-pub fn part1(file_content: Vec<String>) -> i32 {
-    
-    let mut safe = 0;
-    for i in 0..file_content.len() {
-        let unusual_data_frame_tmp: Vec<&str> = file_content[i].split_whitespace().collect();
-        let unusual_data_frame: Vec<i32>  = unusual_data_frame_tmp.iter().filter_map(|d|  d.parse::<i32>().ok()).collect();         
+impl AdventProblem for Problem02 {
 
-        let mut asc_data = unusual_data_frame.clone();
-        let mut desc_data = unusual_data_frame.clone();
+    fn part1(file_content: Vec<String>) -> i32 {
+        
+        let mut safe = 0;
+        for i in 0..file_content.len() {
+            let unusual_data_frame_tmp: Vec<&str> = file_content[i].split_whitespace().collect();
+            let unusual_data_frame: Vec<i32>  = unusual_data_frame_tmp.iter().filter_map(|d|  d.parse::<i32>().ok()).collect();         
 
-        asc_data.sort();
-        desc_data.sort_by(|a, b| b.cmp(a));
+            let mut asc_data = unusual_data_frame.clone();
+            let mut desc_data = unusual_data_frame.clone();
 
-        asc_data.iter().eq(&unusual_data_frame);
+            asc_data.sort();
+            desc_data.sort_by(|a, b| b.cmp(a));
 
-        if (asc_data.iter().eq(&unusual_data_frame) || desc_data.iter().eq(&unusual_data_frame))
-            && unusual_data_frame
-                .windows(2)
-                .all(|pair| (pair[0] - pair[1]).abs() >= 1 && (pair[0] - pair[1]).abs() <= 3) {
-            safe += 1;
-        }
+            asc_data.iter().eq(&unusual_data_frame);
 
-    };
-    safe
-}
+            if (asc_data.iter().eq(&unusual_data_frame) || desc_data.iter().eq(&unusual_data_frame))
+                && unusual_data_frame
+                    .windows(2)
+                    .all(|pair| (pair[0] - pair[1]).abs() >= 1 && (pair[0] - pair[1]).abs() <= 3) {
+                safe += 1;
+            }
 
-pub fn part2(file_content: Vec<String>) -> i32 {
+        };
+        safe
+    }
 
-    let mut safe = 0;
+    fn part2(file_content: Vec<String>) -> i32 {
 
-    for i in 0..file_content.len() {
-        let unusual_data_frame_tmp: Vec<&str> = file_content[i].split_whitespace().collect();
-        let unusual_data_frame: Vec<i32>  = unusual_data_frame_tmp.iter().filter_map(|d|  d.parse::<i32>().ok()).collect();         
+        let mut safe = 0;
 
-        let distances: Vec<i32> = (&unusual_data_frame).windows(2).map(|w| w[1] - w[0] ).collect();
+        for i in 0..file_content.len() {
+            let unusual_data_frame_tmp: Vec<&str> = file_content[i].split_whitespace().collect();
+            let unusual_data_frame: Vec<i32>  = unusual_data_frame_tmp.iter().filter_map(|d|  d.parse::<i32>().ok()).collect();         
 
-        if frame_check(&distances) {
-            safe+= 1;
-        } else if solve_distances(&distances, &unusual_data_frame) {
-            safe+=1;
-        }
+            let distances: Vec<i32> = (&unusual_data_frame).windows(2).map(|w| w[1] - w[0] ).collect();
 
-    };
-    safe
+            if frame_check(&distances) {
+                safe+= 1;
+            } else if solve_distances(&distances, &unusual_data_frame) {
+                safe+=1;
+            }
+
+        };
+        safe
+    }
 }
 
 fn solve_distances(distances: &Vec<i32>, data_frames: &Vec<i32>) -> bool {
