@@ -1,14 +1,19 @@
 use std::collections::HashMap;
-use std::io::Read;
-use std::{fs::File};
-use std::{io};
-
 use crate::problems::AdventProblem;
+use crate::utils::txt_readers::read_file_P3;
 
 pub struct Problem03;
 
 impl AdventProblem for Problem03 {
-    fn part1(file_content: &str) -> i32 {
+    fn part1(&self, file_path:  &str) -> i32 {
+
+        let file_content = match read_file_P3(file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Error reading file {e}");
+                return -1;
+            }
+        };
 
         let enable_idx = get_enable_indexes(&file_content);
         let disable_idx = get_disable_indexes(&file_content);
@@ -30,6 +35,10 @@ impl AdventProblem for Problem03 {
 
         let result: i32 = multiplier_idx.values().map(|(a,b)| a*b).sum();
         result
+    }
+
+    fn part2(&self, input: &str) -> i32 {
+        -1
     }
 
 }

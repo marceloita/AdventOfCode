@@ -1,5 +1,5 @@
 use std::{fs::File, io::BufReader, io::BufRead};
-use std::{io:: {Result, Error}, vec};
+use std::{io:: {Read, Result, Error, ErrorKind}, vec};
 
 // PROBLEMA 1 I 2
 pub fn read_file_P1P2(path: &str) -> Result<Vec<String>> {
@@ -15,7 +15,7 @@ pub fn read_file_P1P2(path: &str) -> Result<Vec<String>> {
 }
 
 // PROBLEMA 3
-pub fn read_file_P3(path: &str) -> Result<String, Error> {
+pub fn read_file_P3(path: &str) -> Result<String> {
     let mut file_contents = String::new();
     let _ = File::open(path)?.read_to_string(&mut file_contents);
     Ok(file_contents)
@@ -35,8 +35,8 @@ pub fn read_matrix_P4(file_path: &str) -> Result<Vec<Vec<char>>> {
 
         match expected_columns {
             Some(cols) if chars.len() != cols => {
-                return Err(io::Error::new(
-                    io::ErrorKind::InvalidData,
+                return Err(Error::new(
+                    ErrorKind::InvalidData,
                     format!("Line {} has inconsistent number of columns: expected {}, got {}",
                             line_num + 1, cols, chars.len()),
                 ));
@@ -54,18 +54,18 @@ pub fn read_matrix_P4(file_path: &str) -> Result<Vec<Vec<char>>> {
 }
 
 // PROBLEMA 5
-pub fn extract_rules_P5(file_path: &str) -> Result<Vec<(u32,u32)>> {
+pub fn extract_rules_P5(file_path: &str) -> Result<Vec<(i32,i32)>> {
     let file = File::open(file_path)?;
     let reader = BufReader::new(file);
 
-    let mut rules: Vec<(u32,u32)> = Vec::new();
+    let mut rules: Vec<(i32,i32)> = Vec::new();
 
     for line in reader.lines() {
         let line = line?;
         let parts: Vec<&str>  = line.trim().split('|').collect();
         if parts.len() == 2 {
-            let a = parts[0].parse::<u32>().unwrap_or(0);
-            let b = parts[1].parse::<u32>().unwrap_or(0);
+            let a = parts[0].parse::<i32>().unwrap_or(0);
+            let b = parts[1].parse::<i32>().unwrap_or(0);
             rules.push((a,b));
         }
     };
@@ -73,15 +73,15 @@ pub fn extract_rules_P5(file_path: &str) -> Result<Vec<(u32,u32)>> {
 
 }
 
-pub fn extract_orders_P5(file_path: &str) -> Result<Vec<Vec<u32>>> {
+pub fn extract_orders_P5(file_path: &str) -> Result<Vec<Vec<i32>>> {
     let file = File::open(file_path)?;
     let reader = BufReader::new(file);
 
-    let mut orders: Vec<Vec<u32>> = Vec::new();
+    let mut orders: Vec<Vec<i32>> = Vec::new();
 
     for line in reader.lines() {
         let line = line?;
-        let order_line = line.trim().split(',').filter_map(|x| x.parse::<u32>().ok()).collect::<Vec<u32>>();
+        let order_line = line.trim().split(',').filter_map(|x| x.parse::<i32>().ok()).collect::<Vec<i32>>();
         if !order_line.is_empty() {
             orders.push(order_line);
         }

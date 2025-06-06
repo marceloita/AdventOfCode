@@ -1,6 +1,6 @@
-use std::{fs::File, io::BufReader, io::BufRead};
-use std::{char, io, vec};
+use std::{char};
 use crate::problems::AdventProblem;
+use crate::utils::txt_readers::read_matrix_P4;
 
 const  DIRECTIONS_PR1: [(isize,isize);8] = [
     (0,1), // RIGHT
@@ -21,7 +21,16 @@ const DIRECTIONS_CROSS: [((isize, isize), (isize, isize)); 2] = [
 pub struct Problem04;
 
 impl AdventProblem for Problem04 {
-    fn part1(xmas_matrix: &Vec<Vec<char>>, word: &str) -> i32 {
+    fn part1(&self, file_path: &str) -> i32 {
+
+        let word: &str = "XMAS";
+        let xmas_matrix = match read_matrix_P4(file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Error reading file {e}");
+                return -1;
+            }
+        };
 
         let mut xmas_count = 0;
 
@@ -29,7 +38,7 @@ impl AdventProblem for Problem04 {
             for j in 0..xmas_matrix[0].len() {
 
                 for &(dx,dy) in &DIRECTIONS_PR1 {
-                    if is_correct(xmas_matrix, i, j, dx, dy, &word) {
+                    if is_correct(&xmas_matrix, i, j, dx, dy, &word) {
                         xmas_count += 1;
                     }
                 }
@@ -38,7 +47,15 @@ impl AdventProblem for Problem04 {
         xmas_count
     }
 
-    fn part2(xmas_matrix: &Vec<Vec<char>>) -> i32 {
+    fn part2(&self, file_path: &str) -> i32 {
+
+        let xmas_matrix = match read_matrix_P4(file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Error reading file {e}");
+                return -1;
+            }
+        };
 
         let mut xmas_count = 0;
 
@@ -51,7 +68,7 @@ impl AdventProblem for Problem04 {
 
                 let mut checker = 0;
                 for &((dx1, dy1),(dx2, dy2)) in &DIRECTIONS_CROSS {
-                    if is_cross_correct(xmas_matrix, i, j, dx1, dy1, dx2, dy2) {
+                    if is_cross_correct(&xmas_matrix, i, j, dx1, dy1, dx2, dy2) {
                         checker += 1;
                     }
 
@@ -137,9 +154,6 @@ fn idx_to_check(xmas_matrix: &Vec<Vec<char>>,
     && xmas_matrix[a_x_idx][a_y_idx].eq(&'A')
     && xmas_matrix[s_x_idx][s_y_idx].eq(&'S')
 }
-
-pub
-
 
 fn is_correct(xmas_matrix: &Vec<Vec<char>>, x: usize, y: usize, dx: isize, dy: isize, word: &str) -> bool{
     let n = xmas_matrix.len();

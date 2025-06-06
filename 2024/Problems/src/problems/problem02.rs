@@ -1,12 +1,19 @@
-use std::{num::ParseIntError, process::Termination};
-use crate::problems::AdventProblem;
+use crate::{problems::AdventProblem, utils::txt_readers::read_file_P1P2};
 
 pub struct Problem02;
 
 impl AdventProblem for Problem02 {
 
-    fn part1(file_content: Vec<String>) -> i32 {
-        
+    fn part1(&self, file_path: &str) -> i32 {
+
+        let file_content = match read_file_P1P2(file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Error reading file {e}");
+                return -1;
+            }
+        };
+
         let mut safe = 0;
         for i in 0..file_content.len() {
             let unusual_data_frame_tmp: Vec<&str> = file_content[i].split_whitespace().collect();
@@ -31,7 +38,15 @@ impl AdventProblem for Problem02 {
         safe
     }
 
-    fn part2(file_content: Vec<String>) -> i32 {
+    fn part2(&self, file_path: &str) -> i32 {
+
+        let file_content = match read_file_P1P2(file_path) {
+            Ok(content) => content,
+            Err(e) => {
+                eprintln!("Error reading file {e}");
+                return -1;
+            }
+        };
 
         let mut safe = 0;
 
